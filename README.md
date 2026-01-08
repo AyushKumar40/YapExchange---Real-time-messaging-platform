@@ -5,11 +5,13 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 ## ✨ Features
 
 ### 🔐 Authentication & Security
+
 - **Secure Authentication** - JWT-based login/register system
 - **User Management** - Profile management and user discovery
 - **Session Management** - Persistent login with token refresh
 
 ### 💬 Real-Time Messaging
+
 - **Instant Messaging** - Real-time message delivery with Socket.io
 - **Typing Indicators** - See when someone is typing
 - **Online Status** - Real-time user presence
@@ -19,30 +21,35 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 - **Message Search** - Search messages by content and room
 
 ### 🎤 Voice Messages
+
 - **Voice Recording** - Record and send voice messages like WhatsApp
 - **Audio Playback** - Professional audio controls with progress bar
 - **Download Support** - Download voice messages
 - **Cross-browser Compatibility** - Works on all modern browsers
 
 ### 📎 File Sharing
+
 - **File Upload** - Upload and share files (images, documents, etc.)
 - **File Preview** - Preview uploaded files
 - **Download Support** - Download shared files
 - **File Type Support** - Images, videos, audio, documents
 
 ### 🎨 Rich Text & Formatting
+
 - **Rich Text Formatting** - Bold, italic, code formatting
 - **@Mentions** - Mention users with @username
 - **Emoji Support** - Rich emoji picker
 - **Message Formatting** - Professional text formatting toolbar
 
 ### 🔔 Notifications
+
 - **Push Notifications** - Browser notifications for new messages
 - **Sound Notifications** - Audio notifications with Web Audio API
 - **Vibration Support** - Mobile vibration notifications
 - **Notification Settings** - Customizable notification preferences
 
 ### 🏠 Room Management
+
 - **Public Rooms** - Join public chat rooms
 - **Private Rooms** - Create and manage private rooms
 - **Direct Messages** - One-on-one conversations
@@ -50,6 +57,7 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 - **Member Management** - View room members and roles
 
 ### 📱 Mobile & UI/UX
+
 - **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 - **Dark/Light Mode** - Toggle between themes
 - **Loading Screens** - Professional loading animations
@@ -59,6 +67,7 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** - Modern UI framework
 - **Socket.io Client** - Real-time communication
 - **Zustand** - Lightweight state management
@@ -69,6 +78,7 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 - **Web Audio API** - Audio processing and notifications
 
 ### Backend
+
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web application framework
 - **Socket.io** - Real-time bidirectional communication
@@ -82,6 +92,7 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** (v16 or higher)
 - **MongoDB** (v4.4 or higher)
 - **npm** or **yarn**
@@ -89,30 +100,34 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Vibhorkothari/Real_TimeChatroom.git
    cd Real_TimeChatroom
    ```
 
 2. **Install dependencies**
+
    ```bash
    # Install root dependencies
    npm install
-   
+
    # Install client dependencies
    cd client && npm install
-   
+
    # Install server dependencies
    cd ../server && npm install
    ```
 
 3. **Environment Setup**
+
    ```bash
    # Create .env file in root directory
    cp .env.example .env
    ```
-   
+
    Add your environment variables:
+
    ```env
    MONGODB_URI=mongodb://localhost:27017/chatroom
    JWT_SECRET=your_super_secret_jwt_key
@@ -121,12 +136,14 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
    ```
 
 4. **Start the application**
+
    ```bash
    # From root directory
    npm run dev
    ```
 
    This will start both:
+
    - **Backend server** on http://localhost:5001
    - **Frontend client** on http://localhost:3006
 
@@ -184,28 +201,33 @@ Real_TimeChatroom/
 ## 🔧 Available Scripts
 
 ### Root Directory
+
 - `npm run dev` - Start both client and server in development mode
 - `npm run client` - Start only the React client
 - `npm run server` - Start only the Node.js server
 
 ### Client Directory
+
 - `npm start` - Start React development server
 - `npm run build` - Build for production
 - `npm test` - Run tests
 
 ### Server Directory
+
 - `npm start` - Start production server
 - `npm run dev` - Start development server with nodemon
 
 ## 🌐 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 - `GET /api/auth/me` - Get current user
 - `GET /api/auth/users` - Get all users
 
 ### Rooms
+
 - `GET /api/rooms/my-rooms` - Get user's rooms
 - `GET /api/rooms/public` - Get public rooms
 - `POST /api/rooms` - Create new room
@@ -216,12 +238,14 @@ Real_TimeChatroom/
 - `POST /api/rooms/:roomId/leave` - Leave room
 
 ### Messages
+
 - `GET /api/messages/room/:roomId` - Get room messages
 - `GET /api/messages/search` - Search messages
 - `POST /api/messages` - Send message
 - `POST /api/messages/:messageId/reactions` - Add reaction
 
 ### File Upload
+
 - `POST /api/upload/single` - Upload single file
 - `POST /api/upload/multiple` - Upload multiple files
 - `GET /uploads/:filename` - Serve uploaded files
@@ -248,36 +272,42 @@ CLIENT_URL=http://localhost:3006
 ## 📱 Features in Detail
 
 ### 🎤 Voice Messages
+
 - **Record & Send** - Record voice messages with one click
 - **Audio Controls** - Play, pause, seek with progress bar
 - **Download Support** - Download voice messages
 - **Cross-browser** - Works on Chrome, Firefox, Safari, Edge
 
 ### 🔍 Message Search
+
 - **Global Search** - Search across all messages
 - **Room Search** - Search within specific rooms
 - **Real-time Results** - Instant search results
 - **Highlighted Matches** - Highlighted search terms
 
 ### 💝 Message Reactions
+
 - **Emoji Reactions** - React with various emojis
 - **Real-time Updates** - See reactions instantly
 - **Reaction Counts** - View reaction statistics
 - **Quick Reactions** - Common emoji shortcuts
 
 ### 🧵 Message Threading
+
 - **Reply to Messages** - Reply to specific messages
 - **Thread View** - Organized conversation threads
 - **Thread Notifications** - Notify about thread replies
 - **Thread Management** - Manage threaded conversations
 
 ### 📎 File Sharing
+
 - **Multiple Formats** - Images, videos, audio, documents
 - **File Preview** - Preview files before download
 - **Progress Tracking** - Upload progress indicators
 - **File Management** - Organize and manage files
 
 ### 🔔 Smart Notifications
+
 - **Browser Notifications** - Native browser notifications
 - **Sound Notifications** - Custom notification sounds
 - **Vibration** - Mobile vibration alerts
@@ -286,18 +316,21 @@ CLIENT_URL=http://localhost:3006
 ## 🎨 UI/UX Features
 
 ### 📱 Responsive Design
+
 - **Mobile-First** - Optimized for mobile devices
 - **Tablet Support** - Perfect tablet experience
 - **Desktop Enhanced** - Rich desktop features
 - **Touch Friendly** - Touch-optimized interactions
 
 ### 🌙 Theme Support
+
 - **Dark Mode** - Easy on the eyes
 - **Light Mode** - Clean and bright
 - **Auto Detection** - System theme detection
 - **Persistent** - Remembers your preference
 
 ### ⚡ Performance
+
 - **Fast Loading** - Optimized bundle sizes
 - **Lazy Loading** - Load components on demand
 - **Caching** - Smart caching strategies
@@ -314,6 +347,7 @@ CLIENT_URL=http://localhost:3006
 ## 🐛 Bug Reports
 
 If you find a bug, please create an issue with:
+
 - **Description** - Clear description of the bug
 - **Steps to Reproduce** - How to reproduce the issue
 - **Expected Behavior** - What should happen
@@ -327,6 +361,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Vibhor Kothari**
+
 - 🚀 Full-stack developer
 - 💬 Real-time messaging expert
 - 📱 Mobile-first design advocate
