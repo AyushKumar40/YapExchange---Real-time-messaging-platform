@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiMessageSquare } from 'react-icons/fi';
-import useAuthStore from '../../store/authStore';
-import './Auth.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import {
+  FiMail,
+  FiLock,
+  FiEye,
+  FiEyeOff,
+  FiMessageSquare,
+} from "react-icons/fi";
+import useAuthStore from "../../store/authStore";
+import "./Auth.css";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useAuthStore();
@@ -16,22 +22,22 @@ const Login = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
     const result = await login(formData.email, formData.password);
-    
+
     if (result.success) {
-      toast.success('Login successful!');
+      toast.success("Login successful!");
     } else {
       toast.error(result.message);
     }
@@ -44,10 +50,10 @@ const Login = () => {
           <div className="brand-logo">
             <FiMessageSquare />
           </div>
-          <h2 className="brand-name">ChatRoom by Vibhor</h2>
+          <h2 className="brand-name">YapExchange</h2>
           <p className="brand-tagline">Real-time messaging platform</p>
         </div>
-        
+
         <div className="auth-header">
           <h1>Welcome Back</h1>
           <p>Sign in to your account to continue chatting</p>
@@ -73,7 +79,7 @@ const Login = () => {
             <div className="input-wrapper">
               <FiLock className="input-icon" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 value={formData.password}
@@ -91,18 +97,14 @@ const Login = () => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <Link to="/register" className="auth-link">
               Sign up here
             </Link>

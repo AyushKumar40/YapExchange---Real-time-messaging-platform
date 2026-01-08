@@ -6,11 +6,17 @@
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server/index.js",
-    "client": "cd client && npm start",
+    "client": "cd client && cross-env npm start",
     "build": "cd client && npm run build",
-    "install-all": "npm install && cd client && npm install"
+    "install-all": "npm install && cd client &&npm install"
   },
-  "keywords": ["chat", "socket.io", "react", "mongodb", "real-time"],
+  "keywords": [
+    "chat",
+    "socket.io",
+    "react",
+    "mongodb",
+    "real-time"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {

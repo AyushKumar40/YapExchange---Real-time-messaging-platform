@@ -12,6 +12,7 @@ This guide will help you deploy your Real-Time Chatroom application to Netlify (
 ## 🗄️ Step 1: Set Up MongoDB Atlas
 
 1. **Create MongoDB Atlas Account**
+
    - Go to [MongoDB Atlas](https://mongodb.com/atlas)
    - Sign up for a free account
    - Create a new cluster (M0 Free tier)
@@ -25,6 +26,7 @@ This guide will help you deploy your Real-Time Chatroom application to Netlify (
 ## 🚂 Step 2: Deploy Backend to Railway
 
 ### 2.1 Connect to Railway
+
 1. Go to [Railway](https://railway.app)
 2. Sign in with GitHub
 3. Click "New Project"
@@ -32,8 +34,10 @@ This guide will help you deploy your Real-Time Chatroom application to Netlify (
 5. Choose your `Real_TimeChatroom` repository
 
 ### 2.2 Configure Backend
+
 1. **Set Root Directory**: `server`
 2. **Add Environment Variables**:
+
    ```
    MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/chatroom
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
@@ -47,35 +51,41 @@ This guide will help you deploy your Real-Time Chatroom application to Netlify (
    - Copy the generated URL (e.g., `https://your-app.railway.app`)
 
 ### 2.3 Update CORS Settings
+
 After getting your Railway URL, update the CORS settings in `server/index.js`:
 
 ```javascript
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ["https://your-netlify-app.netlify.app"] 
-      : "http://localhost:3000",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://your-netlify-app.netlify.app"]
+        : "http://localhost:3000",
     methods: ["GET", "POST"],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 ```
 
 ## 🌐 Step 3: Deploy Frontend to Netlify
 
 ### 3.1 Connect to Netlify
+
 1. Go to [Netlify](https://netlify.com)
 2. Sign in with GitHub
 3. Click "New site from Git"
 4. Choose your `Real_TimeChatroom` repository
 
 ### 3.2 Configure Frontend
+
 1. **Build Settings**:
+
    - **Base directory**: `client`
    - **Build command**: `npm run build`
    - **Publish directory**: `build`
 
 2. **Environment Variables**:
+
    ```
    REACT_APP_API_URL=https://your-railway-app.railway.app
    REACT_APP_SOCKET_URL=https://your-railway-app.railway.app
@@ -90,6 +100,7 @@ const io = socketIo(server, {
 ## 🔧 Step 4: Update Environment Variables
 
 ### 4.1 Update Frontend Environment
+
 After getting your Railway URL, update the environment variables in Netlify:
 
 1. Go to your Netlify site dashboard
@@ -101,6 +112,7 @@ After getting your Railway URL, update the environment variables in Netlify:
    ```
 
 ### 4.2 Update Backend CORS
+
 Update the CORS settings in Railway:
 
 1. Go to your Railway project
@@ -122,14 +134,17 @@ Update the CORS settings in Railway:
 ### Common Issues
 
 1. **CORS Errors**
+
    - Ensure CORS origins are correctly set
    - Check that both URLs use HTTPS in production
 
 2. **Socket Connection Issues**
+
    - Verify Socket.io URL is correct
    - Check Railway logs for connection errors
 
 3. **MongoDB Connection Issues**
+
    - Verify MongoDB Atlas connection string
    - Check IP whitelist in MongoDB Atlas
 
@@ -158,11 +173,13 @@ REACT_APP_API_URL=https://your-railway-url.railway.app npm start
 ## 📊 Monitoring
 
 ### Railway Monitoring
+
 - **Logs**: Available in Railway dashboard
 - **Metrics**: CPU, memory usage
 - **Health Checks**: Automatic health check at `/health`
 
 ### Netlify Monitoring
+
 - **Build Logs**: Available in Netlify dashboard
 - **Analytics**: Site analytics and performance
 - **Forms**: Form submissions (if any)
@@ -177,11 +194,13 @@ REACT_APP_API_URL=https://your-railway-url.railway.app npm start
 ## 📈 Scaling
 
 ### Railway Scaling
+
 - Upgrade to paid plan for more resources
 - Add multiple instances for load balancing
 - Use Railway's auto-scaling features
 
 ### Netlify Scaling
+
 - Netlify automatically scales
 - Consider upgrading for more build minutes
 - Use Netlify Functions for serverless features

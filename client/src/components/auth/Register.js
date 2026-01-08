@@ -74,7 +74,7 @@ const Register = () => {
           <div className="brand-logo">
             <FiMessageSquare />
           </div>
-          <h2 className="brand-name">ChatRoom by Vibhor</h2>
+          <h2 className="brand-name">YapExchange</h2>
           <p className="brand-tagline">Real-time messaging platform</p>
         </div>
         
