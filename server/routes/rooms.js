@@ -23,6 +23,22 @@ router.post('/', auth, async (req, res) => {
       }
     }
 
+    // Build members list
+    let members = [{
+      user: req.user._id,
+      role: 'admin'
+    }];
+
+    if (isDirectMessage && Array.isArray(participants) && participants.length > 0) {
+      const uniqueIds = new Set(
+        participants.map(id => id.toString()).concat(req.user._id.toString())
+      );
+      members = Array.from(uniqueIds).map(id => ({
+        user: id,
+        role: id === req.user._id.toString() ? 'admin' : 'member'
+      }));
+    }
+
     const room = new Room({
       name,
       description,
@@ -30,10 +46,7 @@ router.post('/', auth, async (req, res) => {
       isDirectMessage,
       creator: req.user._id,
       participants: isDirectMessage ? participants : [],
-      members: [{
-        user: req.user._id,
-        role: 'admin'
-      }]
+      members
     });
 
     await room.save();

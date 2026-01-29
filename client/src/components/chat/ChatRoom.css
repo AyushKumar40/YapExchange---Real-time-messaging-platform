@@ -22,7 +22,7 @@
 /* WhatsApp-style background options */
 .chat-messages.bg-default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="default-bg" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23default-bg)"/></svg>');
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="default-bg" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"></pattern></defs><rect width="100" height="100" fill="url(%23default-bg)"/></svg>');
 }
 
 .chat-messages.bg-nature {
@@ -98,12 +98,29 @@
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
 }
 
-.bg-option.bg-default { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.bg-option.bg-nature { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.bg-option.bg-sunset { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-.bg-option.bg-ocean { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.bg-option.bg-forest { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-.bg-option.bg-space { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-option.bg-default {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-option.bg-nature {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.bg-option.bg-sunset {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.bg-option.bg-ocean {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-option.bg-forest {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.bg-option.bg-space {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 
 /* Chat header with room info */
 .chat-header {
@@ -183,6 +200,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -201,8 +219,15 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .typing-dots {
@@ -218,12 +243,25 @@
   animation: typing 1.4s infinite;
 }
 
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-10px); }
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-10px);
+  }
 }
 
 .loading-message,
@@ -261,60 +299,60 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   .chat-messages {
     padding: 15px;
     flex: 1;
     overflow-y: auto;
   }
-  
+
   .chat-header {
     padding: 12px 15px;
   }
-  
+
   .room-avatar {
     width: 36px;
     height: 36px;
     font-size: 16px;
   }
-  
+
   .room-details h3 {
     font-size: 15px;
   }
-  
+
   .room-details p {
     font-size: 11px;
   }
-  
+
   .background-selector {
     top: 5px;
     right: 5px;
     padding: 6px;
   }
-  
+
   .bg-options {
     max-width: 180px;
     gap: 6px;
   }
-  
+
   .bg-option {
     width: 28px;
     height: 28px;
   }
-  
+
   .loading-message,
   .error-message {
     padding: 30px;
   }
-  
+
   .loading-message {
     font-size: 14px;
   }
-  
+
   .error-message h3 {
     font-size: 16px;
   }
-  
+
   .error-message p {
     font-size: 14px;
   }
@@ -325,58 +363,58 @@
     border-radius: 6px;
     margin: 5px;
   }
-  
+
   .chat-messages {
     padding: 10px;
   }
-  
+
   .chat-header {
     padding: 10px 12px;
   }
-  
+
   .room-avatar {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
-  
+
   .room-details h3 {
     font-size: 14px;
   }
-  
+
   .room-details p {
     font-size: 10px;
   }
-  
+
   .background-selector {
     top: 3px;
     right: 3px;
     padding: 4px;
   }
-  
+
   .bg-options {
     max-width: 160px;
     gap: 4px;
   }
-  
+
   .bg-option {
     width: 24px;
     height: 24px;
   }
-  
+
   .loading-message,
   .error-message {
     padding: 20px;
   }
-  
+
   .loading-message {
     font-size: 13px;
   }
-  
+
   .error-message h3 {
     font-size: 15px;
   }
-  
+
   .error-message p {
     font-size: 13px;
   }
@@ -387,11 +425,11 @@
     border-radius: 4px;
     margin: 2px;
   }
-  
+
   .chat-messages {
     padding: 8px;
   }
-  
+
   .loading-message,
   .error-message {
     padding: 15px;

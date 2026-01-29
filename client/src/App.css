@@ -39,12 +39,13 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+/* Tablet layout: between 769px and 1024px treat dashboard as stacked (sidebar on top, content below) */
+@media (max-width: 1024px) and (min-width: 769px) {
   .dashboard-container {
     flex-direction: column;
     height: 100vh;
   }
-  
+
   .sidebar {
     width: 100%;
     height: auto;
@@ -58,11 +59,11 @@
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  
+
   .sidebar.expanded {
     max-height: 500px;
   }
-  
+
   .sidebar-header {
     display: flex !important;
     align-items: center;
@@ -71,25 +72,25 @@
     cursor: pointer;
     min-height: 60px;
   }
-  
+
   .main-content {
     flex: 1;
     height: calc(100vh - 60px);
     overflow: hidden;
     transition: height 0.3s ease;
   }
-  
-  .sidebar.expanded + .main-content {
+
+  .sidebar.expanded+.main-content {
     height: calc(100vh - 500px);
   }
-  
+
   .chat-container {
     margin: 10px;
     border-radius: 8px;
     height: calc(100vh - 80px);
   }
-  
-  .sidebar.expanded ~ .main-content .chat-container {
+
+  .sidebar.expanded~.main-content .chat-container {
     height: calc(100vh - 520px);
   }
 }
@@ -98,31 +99,31 @@
   .sidebar {
     max-height: 50px;
   }
-  
+
   .sidebar.expanded {
     max-height: 450px;
   }
-  
+
   .sidebar-header {
     padding: 12px;
     min-height: 50px;
   }
-  
+
   .main-content {
     height: calc(100vh - 50px);
   }
-  
-  .sidebar.expanded + .main-content {
+
+  .sidebar.expanded+.main-content {
     height: calc(100vh - 450px);
   }
-  
+
   .chat-container {
     margin: 5px;
     border-radius: 6px;
     height: calc(100vh - 60px);
   }
-  
-  .sidebar.expanded ~ .main-content .chat-container {
+
+  .sidebar.expanded~.main-content .chat-container {
     height: calc(100vh - 460px);
   }
 }
@@ -133,11 +134,11 @@
     border-radius: 4px;
     height: calc(100vh - 54px);
   }
-  
-  .sidebar.expanded ~ .main-content .chat-container {
+
+  .sidebar.expanded~.main-content .chat-container {
     height: calc(100vh - 454px);
   }
-  
+
   .sidebar-header {
     padding: 8px;
     min-height: 46px;

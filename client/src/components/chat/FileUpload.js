@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { FiUpload, FiImage, FiFile, FiX, FiPlay } from 'react-icons/fi';
-import './FileUpload.css';
+import React, { useState, useRef } from "react";
+import { FiUpload, FiImage, FiFile, FiX, FiPlay } from "react-icons/fi";
+import "./FileUpload.css";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001";
 
 const FileUpload = ({ onFileSelect, onClose }) => {
   const [dragActive, setDragActive] = useState(false);
@@ -11,9 +13,9 @@ const FileUpload = ({ onFileSelect, onClose }) => {
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -22,7 +24,7 @@ const FileUpload = ({ onFileSelect, onClose }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFiles(Array.from(e.dataTransfer.files));
     }
@@ -35,29 +37,31 @@ const FileUpload = ({ onFileSelect, onClose }) => {
   };
 
   const handleFiles = (files) => {
-    const validFiles = files.filter(file => {
+    const validFiles = files.filter((file) => {
       const maxSize = 50 * 1024 * 1024; // 50MB
-      const allowedTypes = /jpeg|jpg|png|gif|mp4|webm|mp3|wav|pdf|doc|docx|txt|zip|rar/;
-      const isValidType = allowedTypes.test(file.type) || allowedTypes.test(file.name);
-      
+      const allowedTypes =
+        /jpeg|jpg|png|gif|mp4|webm|mp3|wav|pdf|doc|docx|txt|zip|rar/;
+      const isValidType =
+        allowedTypes.test(file.type) || allowedTypes.test(file.name);
+
       if (!isValidType) {
         alert(`${file.name} is not a supported file type.`);
         return false;
       }
-      
+
       if (file.size > maxSize) {
         alert(`${file.name} is too large. Maximum size is 50MB.`);
         return false;
       }
-      
+
       return true;
     });
 
-    setSelectedFiles(prev => [...prev, ...validFiles]);
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
   };
 
   const removeFile = (index) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const uploadFiles = async () => {
@@ -66,48 +70,48 @@ const FileUpload = ({ onFileSelect, onClose }) => {
     setUploading(true);
     try {
       const formData = new FormData();
-      selectedFiles.forEach(file => {
-        formData.append('files', file);
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
       });
 
-      const response = await fetch('/api/upload/multiple', {
-        method: 'POST',
+      const response = await fetch(`${API_BASE_URL}/api/upload/multiple`, {
+        method: "POST",
         body: formData,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const result = await response.json();
-      
-      if (result.success) {
+
+      if (result.success && Array.isArray(result.files)) {
         onFileSelect(result.files);
         setSelectedFiles([]);
         onClose();
       } else {
-        alert('Upload failed. Please try again.');
+        alert("Upload failed. Please try again.");
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Upload failed. Please try again.');
+      console.error("Upload error:", error);
+      alert("Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
   };
 
   const getFileIcon = (file) => {
-    if (file.type.startsWith('image/')) return <FiImage />;
-    if (file.type.startsWith('video/')) return <FiPlay />;
-    if (file.type.startsWith('audio/')) return <FiPlay />;
+    if (file.type.startsWith("image/")) return <FiImage />;
+    if (file.type.startsWith("video/")) return <FiPlay />;
+    if (file.type.startsWith("audio/")) return <FiPlay />;
     return <FiFile />;
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -122,7 +126,7 @@ const FileUpload = ({ onFileSelect, onClose }) => {
 
         <div className="file-upload-content">
           <div
-            className={`file-drop-zone ${dragActive ? 'drag-active' : ''}`}
+            className={`file-drop-zone ${dragActive ? "drag-active" : ""}`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -131,13 +135,15 @@ const FileUpload = ({ onFileSelect, onClose }) => {
           >
             <FiUpload className="upload-icon" />
             <p>Drag and drop files here or click to browse</p>
-            <p className="file-info">Images, videos, audio, documents (max 50MB each)</p>
+            <p className="file-info">
+              Images, videos, audio, documents (max 50MB each)
+            </p>
             <input
               ref={fileInputRef}
               type="file"
               multiple
               onChange={handleFileInput}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
           </div>
 
@@ -151,7 +157,9 @@ const FileUpload = ({ onFileSelect, onClose }) => {
                       {getFileIcon(file)}
                       <div className="file-details">
                         <span className="file-name">{file.name}</span>
-                        <span className="file-size">{formatFileSize(file.size)}</span>
+                        <span className="file-size">
+                          {formatFileSize(file.size)}
+                        </span>
                       </div>
                     </div>
                     <button
@@ -176,7 +184,9 @@ const FileUpload = ({ onFileSelect, onClose }) => {
             onClick={uploadFiles}
             disabled={selectedFiles.length === 0 || uploading}
           >
-            {uploading ? 'Uploading...' : `Upload ${selectedFiles.length} file${selectedFiles.length !== 1 ? 's' : ''}`}
+            {uploading
+              ? "Uploading..."
+              : `Upload ${selectedFiles.length} file${selectedFiles.length !== 1 ? "s" : ""}`}
           </button>
         </div>
       </div>

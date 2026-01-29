@@ -4,6 +4,7 @@ const socketIo = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
+const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
@@ -61,8 +62,8 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(express.json());
 
-// Serve static files from uploads directory
-app.use("/uploads", express.static("server/uploads"));
+// Serve static files from uploads directory (use absolute path for reliability)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Health check endpoint
 app.get("/health", (req, res) => {

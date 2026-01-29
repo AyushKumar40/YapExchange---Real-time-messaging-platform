@@ -191,7 +191,8 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+/* Tablet layout: only apply these styles between 769px and 1024px so they don't clash with the true mobile (<768px) drawer styles in index.css */
+@media (max-width: 1024px) and (min-width: 769px) {
   .sidebar {
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
@@ -203,12 +204,12 @@
     position: relative;
     z-index: 1000;
   }
-  
+
   .sidebar.expanded {
     max-height: 500px !important;
     overflow-y: auto;
   }
-  
+
   .sidebar-header {
     padding: 15px;
     cursor: pointer;
@@ -217,7 +218,7 @@
     justify-content: space-between;
     min-height: 60px;
   }
-  
+
   .mobile-menu-toggle {
     display: flex !important;
     align-items: center;
@@ -234,11 +235,11 @@
     visibility: visible !important;
     opacity: 1 !important;
   }
-  
+
   .mobile-menu-toggle:hover {
     background: rgba(255, 255, 255, 0.3);
   }
-  
+
   .hamburger-icon {
     color: white;
     font-size: 20px;
@@ -246,76 +247,77 @@
     display: block !important;
     visibility: visible !important;
   }
-  
+
   .sidebar.expanded .hamburger-icon {
     transform: rotate(90deg);
   }
-  
+
   /* Hide hamburger on desktop */
   @media (min-width: 769px) {
+
     .mobile-menu-toggle,
     .mobile-only {
       display: none !important;
     }
-    
+
     .desktop-only {
       display: flex !important;
     }
   }
-  
+
   /* Hide desktop-only elements on mobile */
   @media (max-width: 768px) {
     .desktop-only {
       display: none !important;
     }
   }
-  
+
   /* Show hamburger only on mobile */
   @media (max-width: 768px) {
     .mobile-only {
       display: flex !important;
     }
-    
+
     .mobile-menu-toggle {
       display: flex !important;
       visibility: visible !important;
       opacity: 1 !important;
     }
-    
+
     .hamburger-icon {
       display: block !important;
       visibility: visible !important;
     }
-    
+
     /* Hide internal hamburger when sidebar is open in mobile */
     .sidebar.mobile-open .mobile-menu-toggle {
       display: none !important;
     }
   }
-  
+
   .user-info {
     flex: 1;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  
+
   .user-avatar {
     width: 40px;
     height: 40px;
   }
-  
+
   .user-details h3 {
     font-size: 14px;
     color: white;
     margin: 0 0 4px 0;
   }
-  
+
   .user-status {
     color: white;
     background: rgba(34, 197, 94, 0.9);
   }
-  
+
   .sidebar-nav {
     max-height: 0;
     overflow: hidden;
@@ -323,13 +325,13 @@
     opacity: 0;
     padding: 0;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 300px;
     opacity: 1;
     padding: 15px;
   }
-  
+
   /* Show navigation when sidebar is open in mobile mode */
   .sidebar.mobile-open .sidebar-nav {
     max-height: 500px !important;
@@ -337,14 +339,14 @@
     padding: 15px !important;
     overflow-y: auto;
   }
-  
+
   .sidebar.mobile-open .sidebar-footer {
     max-height: 200px !important;
     opacity: 1 !important;
     padding: 15px !important;
     overflow-y: auto;
   }
-  
+
   .nav-button {
     width: 100%;
     display: flex;
@@ -362,17 +364,17 @@
     margin-bottom: 8px;
     min-height: 44px;
   }
-  
+
   .nav-button:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.3);
   }
-  
+
   .nav-button.active {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.4);
   }
-  
+
   .sidebar-footer {
     max-height: 0;
     overflow: hidden;
@@ -380,7 +382,7 @@
     opacity: 0;
     padding: 0;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 200px;
     opacity: 1;
@@ -388,34 +390,34 @@
   }
 }
 
-/* Mobile sidebar content visibility */
-@media (max-width: 768px) {
+/* Mobile / tablet sidebar content visibility */
+@media (max-width: 1024px) and (min-width: 769px) {
   .sidebar.expanded {
     max-height: 500px !important;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 300px;
     opacity: 1;
     padding: 15px;
     overflow-y: auto;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 200px;
     opacity: 1;
     padding: 15px;
     overflow-y: auto;
   }
-  
+
   /* Ensure all content is visible */
   .sidebar.expanded * {
     visibility: visible !important;
     opacity: 1 !important;
   }
-  
+
   /* Fix for iOS Safari */
   .sidebar.expanded {
     -webkit-transform: translateZ(0);
@@ -428,12 +430,12 @@
   .sidebar.expanded {
     max-height: 450px !important;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 250px;
     padding: 12px;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 150px;
     padding: 12px;
@@ -444,56 +446,56 @@
   .sidebar {
     max-height: 50px;
   }
-  
+
   .sidebar.expanded {
     max-height: 450px;
   }
-  
+
   .sidebar-header {
     padding: 12px;
     min-height: 50px;
   }
-  
+
   .mobile-menu-toggle {
     width: 32px;
     height: 32px;
     min-height: 40px;
     min-width: 40px;
   }
-  
+
   .hamburger-icon {
     font-size: 18px;
   }
-  
+
   .user-avatar {
     width: 32px;
     height: 32px;
   }
-  
+
   .avatar-placeholder {
     font-size: 12px;
   }
-  
+
   .user-details h3 {
     font-size: 12px;
   }
-  
+
   .user-status {
     font-size: 10px;
     padding: 2px 6px;
   }
-  
+
   .nav-button {
     padding: 10px 12px;
     font-size: 13px;
     min-height: 40px;
     margin-bottom: 6px;
   }
-  
+
   .sidebar-footer {
     padding: 12px;
   }
-  
+
   .theme-toggle-button,
   .notification-button,
   .logout-button {
@@ -502,21 +504,21 @@
     min-height: 40px;
     margin-bottom: 6px;
   }
-  
+
   .theme-icon,
   .notification-icon,
   .logout-icon {
     font-size: 14px;
   }
-  
+
   .sidebar-nav {
     padding: 12px;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 250px;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 150px;
   }
@@ -527,36 +529,36 @@
     padding: 8px;
     min-height: 46px;
   }
-  
+
   .user-avatar {
     width: 28px;
     height: 28px;
   }
-  
+
   .avatar-placeholder {
     font-size: 11px;
   }
-  
+
   .user-details h3 {
     font-size: 11px;
   }
-  
+
   .user-status {
     font-size: 9px;
     padding: 1px 4px;
   }
-  
+
   .nav-button {
     padding: 8px 10px;
     font-size: 12px;
     min-height: 36px;
     margin-bottom: 4px;
   }
-  
+
   .sidebar-footer {
     padding: 8px;
   }
-  
+
   .theme-toggle-button,
   .notification-button,
   .logout-button {
@@ -565,21 +567,21 @@
     min-height: 36px;
     margin-bottom: 4px;
   }
-  
+
   .theme-icon,
   .notification-icon,
   .logout-icon {
     font-size: 13px;
   }
-  
+
   .sidebar-nav {
     padding: 8px;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 200px;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 120px;
   }
@@ -589,12 +591,12 @@
   .sidebar.expanded {
     max-height: 400px !important;
   }
-  
+
   .sidebar.expanded .sidebar-nav {
     max-height: 200px;
     padding: 8px;
   }
-  
+
   .sidebar.expanded .sidebar-footer {
     max-height: 120px;
     padding: 8px;

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiMessageCircle, FiSearch } from 'react-icons/fi';
+import { toast } from 'react-hot-toast';
 import useChatStore from '../../store/chatStore';
 import useAuthStore from '../../store/authStore';
 import './DirectMessages.css';
 
 const DirectMessages = () => {
   const navigate = useNavigate();
-  const { users, fetchUsers } = useChatStore();
+  const { users, fetchUsers, startDirectMessage } = useChatStore();
   const { user } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -17,23 +18,35 @@ const DirectMessages = () => {
   }, [fetchUsers]);
 
   useEffect(() => {
-    if (!Array.isArray(users)) {
+    if (!Array.isArray(users) || !user || !user._id) {
       setFilteredUsers([]);
       return;
     }
-    
-    const filtered = users.filter(userItem => 
-      userItem && userItem.username && userItem._id &&
-      userItem.username.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      userItem._id !== user._id
-    );
-    setFilteredUsers(filtered);
-  }, [users, searchTerm, user._id]);
 
-  const handleStartConversation = (otherUser) => {
-    // Navigate to a direct message room
-    // This would typically create or find an existing DM room
-    navigate(`/dashboard/direct/${otherUser._id}`);
+    const search = searchTerm.toLowerCase();
+    const filtered = users.filter((userItem) =>
+      userItem &&
+      userItem.username &&
+      userItem._id &&
+      userItem._id !== user._id &&
+      userItem.username.toLowerCase().includes(search)
+    );
+
+    setFilteredUsers(filtered);
+  }, [users, searchTerm, user]);
+
+  const handleStartConversation = async (otherUser) => {
+    try {
+      const result = await startDirectMessage(otherUser._id, otherUser.username);
+      if (result?.success && result.room?._id) {
+        navigate(`/dashboard/room/${result.room._id}`);
+      } else {
+        toast.error(result?.error || 'Could not start direct message');
+      }
+    } catch (error) {
+      console.error('Start conversation error:', error);
+      toast.error('Something went wrong starting the conversation');
+    }
   };
 
   return (

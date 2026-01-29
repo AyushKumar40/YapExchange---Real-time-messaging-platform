@@ -49,6 +49,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -60,20 +61,20 @@
   .message-list {
     padding: 5px 0;
   }
-  
+
   .empty-messages {
     margin: 10px;
     padding: 40px 15px;
   }
-  
+
   .empty-icon {
     font-size: 36px;
   }
-  
+
   .empty-messages h3 {
     font-size: 18px;
   }
-  
+
   .empty-messages p {
     font-size: 13px;
   }
@@ -84,15 +85,15 @@
     margin: 5px;
     padding: 30px 10px;
   }
-  
+
   .empty-icon {
     font-size: 32px;
   }
-  
+
   .empty-messages h3 {
     font-size: 16px;
   }
-  
+
   .empty-messages p {
     font-size: 12px;
   }

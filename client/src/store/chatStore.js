@@ -57,7 +57,7 @@ const useChatStore = create((set, get) => ({
           // Check if message mentions current user
           const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
           const isMention = message.mentions?.some(
-            (mention) => mention._id === currentUser._id
+            (mention) => mention._id === currentUser._id,
           );
 
           if (isMention) {
@@ -101,7 +101,7 @@ const useChatStore = create((set, get) => ({
       const { messageId, reactions } = data;
       const { messages, currentRoom } = get();
       const updatedMessages = messages.map((msg) =>
-        msg._id === messageId ? { ...msg, reactions } : msg
+        msg._id === messageId ? { ...msg, reactions } : msg,
       );
       set({ messages: updatedMessages });
 
@@ -116,9 +116,52 @@ const useChatStore = create((set, get) => ({
         notificationService.showReactionNotification(
           message,
           latestReaction,
-          roomName
+          roomName,
         );
         notificationService.playNotificationSound();
+      }
+    });
+
+    // Direct message events
+    socket.on("message_sent", (data) => {
+      try {
+        const { message } = data || {};
+        if (!message || !message.room) return;
+        const { currentRoom, messages } = get();
+        if (!currentRoom || !currentRoom._id) return;
+        if (message.room.toString() !== currentRoom._id.toString()) return;
+        const exists = messages.some((m) => m._id === message._id);
+        if (!exists) {
+          set({ messages: [...messages, message] });
+        }
+      } catch (error) {
+        console.error("message_sent handler error:", error);
+      }
+    });
+
+    socket.on("new_direct_message", (data) => {
+      try {
+        const { message } = data || {};
+        if (!message || !message.room) return;
+        const { currentRoom, messages, rooms } = get();
+
+        // Ensure DM room is in rooms list
+        const hasRoom =
+          Array.isArray(rooms) &&
+          rooms.some((r) => r._id === message.room.toString());
+        if (!hasRoom) {
+          // Let HTTP fetch refresh rooms later; avoid mutating with partial data
+        }
+
+        if (!currentRoom || !currentRoom._id) return;
+        if (message.room.toString() !== currentRoom._id.toString()) return;
+
+        const exists = messages.some((m) => m._id === message._id);
+        if (!exists) {
+          set({ messages: [...messages, message] });
+        }
+      } catch (error) {
+        console.error("new_direct_message handler error:", error);
       }
     });
 
@@ -146,6 +189,65 @@ const useChatStore = create((set, get) => ({
       if (error.response?.status === 401) {
         set({ rooms: [] });
       }
+    }
+  },
+
+  // Direct messages: create or get a DM room with another user and return it
+  startDirectMessage: async (otherUserId, otherUsername) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    try {
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      const currentUserId = currentUser?._id;
+
+      if (!currentUserId) {
+        return { success: false, error: "Current user not found" };
+      }
+
+      const participants = [currentUserId, otherUserId];
+
+      const response = await axios.post(`${API_BASE_URL}/api/rooms`, {
+        name: otherUsername || "Direct Message",
+        description: `Direct conversation with ${otherUsername || "user"}`,
+        isPrivate: true,
+        isDirectMessage: true,
+        participants,
+      });
+
+      const room = response.data?.room;
+      if (!room || !room._id) {
+        return {
+          success: false,
+          error: "Failed to create or fetch direct message room",
+        };
+      }
+
+      // Add/merge room into rooms list
+      const currentRooms = Array.isArray(get().rooms) ? get().rooms : [];
+      const exists = currentRooms.some((r) => r._id === room._id);
+      if (!exists) {
+        set({ rooms: [...currentRooms, room] });
+      }
+
+      // Join the room via socket and fetch its messages
+      const { socket } = get();
+      if (socket) {
+        socket.emit("join_room", { roomId: room._id });
+      }
+      await get().fetchMessages(room._id);
+      set({ currentRoom: room });
+
+      return { success: true, room };
+    } catch (error) {
+      console.error("Start direct message error:", error);
+      return {
+        success: false,
+        error:
+          error.response?.data?.message || "Failed to start direct message",
+      };
     }
   },
 
@@ -221,7 +323,7 @@ const useChatStore = create((set, get) => ({
 
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/api/messages/room/${roomId}?page=${page}`
+        `${API_BASE_URL}/api/messages/room/${roomId}?page=${page}`,
       );
       set({ messages: response.data.messages || [] });
     } catch (error) {
@@ -229,6 +331,63 @@ const useChatStore = create((set, get) => ({
       if (error.response?.status === 401) {
         set({ messages: [] });
       }
+    }
+  },
+
+  updateMessage: async (messageId, content) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, error: "Not authenticated" };
+    if (!messageId) return { success: false, error: "Message id missing" };
+    if (!content || !content.trim()) {
+      return { success: false, error: "Message cannot be empty" };
+    }
+
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/api/messages/${messageId}`,
+        { content: content.trim() },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      const updated = response.data?.message;
+      if (updated?._id) {
+        const { messages } = get();
+        set({
+          messages: (messages || []).map((m) =>
+            m._id === updated._id ? updated : m,
+          ),
+        });
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Update message error:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to update message",
+      };
+    }
+  },
+
+  deleteMessage: async (messageId) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, error: "Not authenticated" };
+    if (!messageId) return { success: false, error: "Message id missing" };
+
+    try {
+      await axios.delete(`${API_BASE_URL}/api/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { messages } = get();
+      set({ messages: (messages || []).filter((m) => m._id !== messageId) });
+      return { success: true };
+    } catch (error) {
+      console.error("Delete message error:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to delete message",
+      };
     }
   },
 
@@ -248,7 +407,7 @@ const useChatStore = create((set, get) => ({
       }
 
       const response = await axios.get(
-        `${API_BASE_URL}/api/messages/search?${params}`
+        `${API_BASE_URL}/api/messages/search?${params}`,
       );
       return {
         success: true,
@@ -268,13 +427,46 @@ const useChatStore = create((set, get) => ({
     roomId,
     messageType = "text",
     attachment = null,
-    replyTo = null
+    replyTo = null,
   ) => {
-    const { socket } = get();
+    const { socket, currentRoom } = get();
     if (!socket) return { success: false, error: "Socket not connected" };
 
     try {
-      // Emit message via socket for real-time delivery
+      // For direct message rooms, use dedicated DM socket event
+      if (currentRoom && currentRoom.isDirectMessage) {
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const meId = currentUser?._id;
+        const participants = currentRoom.participants || [];
+
+        let recipientId = null;
+        if (participants.length > 0) {
+          const raw = participants.find((p) => {
+            const id = typeof p === "string" ? p : p._id;
+            return id && id.toString() !== meId;
+          });
+          recipientId = typeof raw === "string" ? raw : raw?._id;
+        }
+
+        if (!recipientId) {
+          return {
+            success: false,
+            error: "Direct message recipient not found",
+          };
+        }
+
+        socket.emit("send_direct_message", {
+          recipientId,
+          content,
+          messageType,
+          attachment,
+          replyTo,
+        });
+
+        return { success: true };
+      }
+
+      // Default: room-based message
       socket.emit("send_message", {
         roomId,
         content,
@@ -349,7 +541,7 @@ const useChatStore = create((set, get) => ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const { socket } = get();
