@@ -102,7 +102,7 @@ A modern, feature-rich real-time chat application built with React, Node.js, Soc
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/Vibhorkothari/Real_TimeChatroom.git
+   git clone https://github.com/AyushKumar40/YapExchange---Real-time-messaging-platform.git
    cd Real_TimeChatroom
    ```
 
@@ -360,7 +360,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Vibhor Kothari**
+**Ayush Kumar**
 
 - 🚀 Full-stack developer
 - 💬 Real-time messaging expert
@@ -398,4 +398,5 @@ This chat application is feature-complete and production-ready! Some potential f
 📧 **Contact**: [Your email here]
 
 🐦 **Follow**: [Your social media here]
+
 # YapExchange---Real-time-messaging-platform
