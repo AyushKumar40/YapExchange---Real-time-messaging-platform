@@ -1,6 +1,6 @@
-import React from 'react';
-import Mention from '../components/chat/Mention';
-import { parseFormattedText } from './textFormatting';
+import React from "react";
+import Mention from "../components/chat/Mention";
+import { parseFormattedText } from "./textFormatting";
 
 // Parse message content and replace @mentions with Mention components
 export const parseMessageContent = (content, mentions = [], currentUserId) => {
@@ -18,15 +18,18 @@ export const parseMessageContent = (content, mentions = [], currentUserId) => {
       parts.push(parseFormattedText(textBefore));
     }
 
-    // Find the mentioned user
-    const mentionedUser = mentions.find(user => user.username === match[1]);
+    // Store username in a local variable to avoid closure issue
+    const mentionedUsername = match[1];
+    const mentionedUser = mentions.find(
+      (user) => user.username === mentionedUsername
+    );
     const isOwnMention = mentionedUser && mentionedUser._id === currentUserId;
 
     // Add mention component
     parts.push(
       <Mention
         key={match.index}
-        username={match[1]}
+        username={mentionedUsername}
         isOwnMention={isOwnMention}
       />
     );
@@ -46,7 +49,7 @@ export const parseMessageContent = (content, mentions = [], currentUserId) => {
 // Check if message contains mentions for current user
 export const hasUserMention = (message, currentUserId) => {
   if (!message.mentions || !Array.isArray(message.mentions)) return false;
-  return message.mentions.some(mention => mention._id === currentUserId);
+  return message.mentions.some((mention) => mention._id === currentUserId);
 };
 
 // Extract usernames from content for autocomplete
@@ -54,13 +57,13 @@ export const extractUsernames = (content) => {
   const mentionRegex = /@(\w+)/g;
   const usernames = [];
   let match;
-  
+
   // Reset regex lastIndex to avoid issues with global regex
   mentionRegex.lastIndex = 0;
-  
+
   while ((match = mentionRegex.exec(content)) !== null) {
     usernames.push(match[1]);
   }
-  
+
   return usernames;
 };
