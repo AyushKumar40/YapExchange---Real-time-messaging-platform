@@ -12,7 +12,6 @@ This guide will help you deploy your Real-Time Chatroom application to Netlify (
 ## 🗄️ Step 1: Set Up MongoDB Atlas
 
 1. **Create MongoDB Atlas Account**
-
    - Go to [MongoDB Atlas](https://mongodb.com/atlas)
    - Sign up for a free account
    - Create a new cluster (M0 Free tier)
@@ -79,7 +78,6 @@ const io = socketIo(server, {
 ### 3.2 Configure Frontend
 
 1. **Build Settings**:
-
    - **Base directory**: `client`
    - **Build command**: `npm run build`
    - **Publish directory**: `build`
@@ -134,17 +132,14 @@ Update the CORS settings in Railway:
 ### Common Issues
 
 1. **CORS Errors**
-
    - Ensure CORS origins are correctly set
    - Check that both URLs use HTTPS in production
 
 2. **Socket Connection Issues**
-
    - Verify Socket.io URL is correct
    - Check Railway logs for connection errors
 
 3. **MongoDB Connection Issues**
-
    - Verify MongoDB Atlas connection string
    - Check IP whitelist in MongoDB Atlas
 
