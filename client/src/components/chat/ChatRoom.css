@@ -435,3 +435,95 @@
     padding: 15px;
   }
 }
+
+/* Call member picker (group rooms) */
+.call-member-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.call-member-picker {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-width: 280px;
+  max-width: 95vw;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.call-member-picker h3 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #1a1a2e;
+}
+
+.call-member-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.call-member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+  gap: 8px;
+}
+
+.call-member-item:last-child {
+  border-bottom: none;
+}
+
+.call-member-item span {
+  flex: 1;
+  font-weight: 500;
+  color: #333;
+}
+
+.call-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f0f0f5;
+  color: #667eea;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.call-picker-btn:hover {
+  background: #e0e0ee;
+  transform: scale(1.05);
+}
+
+.call-picker-btn.voice {
+  color: #10b981;
+}
+
+.call-picker-cancel {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.call-picker-cancel:hover {
+  background: #f8f9fa;
+}

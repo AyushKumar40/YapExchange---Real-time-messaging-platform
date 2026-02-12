@@ -1,7 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { FiImage, FiUsers, FiSettings, FiSearch } from "react-icons/fi";
+import {
+  FiImage,
+  FiUsers,
+  FiSettings,
+  FiSearch,
+  FiPhone,
+  FiVideo,
+} from "react-icons/fi";
 import useChatStore from "../../store/chatStore";
 import useAuthStore from "../../store/authStore";
 import MessageList from "./MessageList";
@@ -36,7 +43,10 @@ const ChatRoom = () => {
   const [showMemberList, setShowMemberList] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
+  const [showCallMemberPicker, setShowCallMemberPicker] = useState(false);
+  const [callPickerType, setCallPickerType] = useState("video");
   const messagesEndRef = useRef(null);
+  const setOutgoingCallTarget = useChatStore((s) => s.setOutgoingCallTarget);
 
   const backgroundOptions = [
     {
@@ -183,6 +193,61 @@ const ChatRoom = () => {
     return currentRoom?.members?.length || 0;
   };
 
+  const getOtherParticipant = () => {
+    if (!currentRoom || !user?._id) return null;
+    const myId = user._id.toString();
+    if (currentRoom.isDirectMessage && currentRoom.participants?.length) {
+      const other = currentRoom.participants.find((p) => {
+        const id = (p?._id || p)?.toString();
+        return id && id !== myId;
+      });
+      if (other) {
+        return { _id: other._id || other, username: other.username || "User" };
+      }
+    }
+    if (currentRoom.members?.length) {
+      const other = currentRoom.members.find((m) => {
+        const id = (m?.user?._id || m?._id)?.toString();
+        return id && id !== myId;
+      });
+      if (other) {
+        const u = other.user || other;
+        return { _id: u._id || u, username: u.username || "User" };
+      }
+    }
+    return null;
+  };
+
+  const handleStartCall = (isVideoCall) => {
+    const other = getOtherParticipant();
+    if (!other) {
+      toast.error("No one to call in this room.");
+      return;
+    }
+    if (currentRoom?.isDirectMessage) {
+      setOutgoingCallTarget({
+        receiverId: other._id,
+        receiverName: other.username,
+        isVideoCall,
+      });
+    } else {
+      setCallPickerType(isVideoCall ? "video" : "voice");
+      setShowCallMemberPicker(true);
+    }
+  };
+
+  const handleSelectMemberForCall = (member, isVideoCall) => {
+    const id = member?.user?._id || member?._id;
+    const username = member?.user?.username || member?.username || "User";
+    if (!id) return;
+    setOutgoingCallTarget({
+      receiverId: id,
+      receiverName: username,
+      isVideoCall: !!isVideoCall,
+    });
+    setShowCallMemberPicker(false);
+  };
+
   const handleReply = (message) => {
     setReplyingTo(message);
   };
@@ -235,6 +300,20 @@ const ChatRoom = () => {
           >
             <FiUsers />
           </button>
+          <button
+            className="header-action-btn"
+            onClick={() => handleStartCall(true)}
+            title="Video call"
+          >
+            <FiVideo />
+          </button>
+          <button
+            className="header-action-btn"
+            onClick={() => handleStartCall(false)}
+            title="Voice call"
+          >
+            <FiPhone />
+          </button>
         </div>
       </div>
 
@@ -245,7 +324,9 @@ const ChatRoom = () => {
             {backgroundOptions.map((bg) => (
               <div
                 key={bg.id}
-                className={`bg-option bg-${bg.id} ${selectedBackground === bg.id ? "active" : ""}`}
+                className={`bg-option bg-${bg.id} ${
+                  selectedBackground === bg.id ? "active" : ""
+                }`}
                 onClick={() => {
                   setSelectedBackground(bg.id);
                   localStorage.setItem("chatBackground", bg.id);
@@ -313,6 +394,66 @@ const ChatRoom = () => {
           localMessages={messages}
           currentRoomName={currentRoom?.name}
         />
+      )}
+
+      {/* Call member picker (group rooms) */}
+      {showCallMemberPicker && currentRoom?.members?.length > 0 && (
+        <div
+          className="call-member-picker-overlay"
+          onClick={() => setShowCallMemberPicker(false)}
+        >
+          <div
+            className="call-member-picker"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>
+              {callPickerType === "video"
+                ? "Select member for video call"
+                : "Select member for voice call"}
+            </h3>
+            <ul className="call-member-list">
+              {currentRoom.members
+                .filter(
+                  (m) =>
+                    (m?.user?._id || m?._id)?.toString() !==
+                    user?._id?.toString(),
+                )
+                .map((member) => {
+                  const u = member.user || member;
+                  const mid = u._id || u;
+                  const name = u.username || "User";
+                  return (
+                    <li key={mid} className="call-member-item">
+                      <span>{name}</span>
+                      <button
+                        type="button"
+                        className="call-picker-btn video"
+                        onClick={() => handleSelectMemberForCall(member, true)}
+                        title="Video call"
+                      >
+                        <FiVideo />
+                      </button>
+                      <button
+                        type="button"
+                        className="call-picker-btn voice"
+                        onClick={() => handleSelectMemberForCall(member, false)}
+                        title="Voice call"
+                      >
+                        <FiPhone />
+                      </button>
+                    </li>
+                  );
+                })}
+            </ul>
+            <button
+              type="button"
+              className="call-picker-cancel"
+              onClick={() => setShowCallMemberPicker(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

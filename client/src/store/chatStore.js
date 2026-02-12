@@ -17,6 +17,7 @@ const useChatStore = create((set, get) => ({
   isLoading: false,
   error: null,
   typingUsers: new Set(),
+  outgoingCallTarget: null,
 
   // Socket connection
   initializeSocket: () => {
@@ -40,7 +41,7 @@ const useChatStore = create((set, get) => ({
 
     socket.on("disconnect", () => {
       console.log("Disconnected from server");
-      set({ isConnected: false });
+      set({ isConnected: false, outgoingCallTarget: null });
     });
 
     socket.on("new_message", (data) => {
@@ -172,8 +173,8 @@ const useChatStore = create((set, get) => ({
     const { socket } = get();
     if (socket) {
       socket.disconnect();
-      set({ socket: null, isConnected: false });
     }
+    set({ socket: null, isConnected: false, outgoingCallTarget: null });
   },
 
   // Room management
@@ -599,6 +600,10 @@ const useChatStore = create((set, get) => ({
 
   clearCurrentRoom: () => {
     set({ currentRoom: null, messages: [] });
+  },
+
+  setOutgoingCallTarget: (target) => {
+    set({ outgoingCallTarget: target });
   },
 }));
 

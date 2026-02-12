@@ -254,7 +254,18 @@ const setupSocketHandlers = (io) => {
     // Handle direct messages
     socket.on("send_direct_message", async (data) => {
       try {
-        const { recipientId, content, messageType = "text" } = data;
+        const {
+          recipientId,
+          content = "",
+          messageType = "text",
+          attachment = null,
+          replyTo = null,
+        } = data || {};
+
+        if (!recipientId) {
+          socket.emit("error", { message: "Recipient is required" });
+          return;
+        }
 
         // Find or create direct message room
         let room = await Room.findOne({
@@ -278,17 +289,34 @@ const setupSocketHandlers = (io) => {
           await room.save();
         }
 
-        // Create message
+        // Process @mentions in DM text content (optional but consistent with rooms)
+        const mentionRegex = /@(\w+)/g;
+        const mentions = [];
+        let match;
+        while ((match = mentionRegex.exec(content)) !== null) {
+          const username = match[1];
+          const mentionedUser = await User.findOne({ username });
+          if (mentionedUser) {
+            mentions.push(mentionedUser._id);
+          }
+        }
+
+        // Create message (supports text, audio, files, replies)
         const message = new Message({
           content,
           sender: socket.user._id,
           room: room._id,
           messageType,
           recipient: recipientId,
+          attachment: attachment || null,
+          replyTo: replyTo || null,
+          mentions,
         });
 
         await message.save();
         await message.populate("sender", "username avatar");
+        await message.populate("replyTo", "content sender");
+        await message.populate("mentions", "username avatar");
 
         // Emit to both users
         const recipientSocket = connectedUsers.get(recipientId.toString());
@@ -350,6 +378,46 @@ const setupSocketHandlers = (io) => {
         console.error("Add reaction error:", error);
         socket.emit("error", { message: "Server error" });
       }
+    });
+
+    // WebRTC call signaling (use userId; server resolves to socketId via connectedUsers)
+    socket.on("call-user", ({ userToCall, signalData, from, isVideoCall }) => {
+      const target = connectedUsers.get(userToCall?.toString());
+      if (!target) {
+        socket.emit("call-failed", {
+          message: "User is offline or unavailable",
+        });
+        return;
+      }
+      io.to(target.socketId).emit("incoming-call", {
+        signal: signalData,
+        from: socket.user._id,
+        fromUsername: socket.user.username,
+        isVideoCall: !!isVideoCall,
+      });
+    });
+
+    socket.on("answer-call", ({ to, signal }) => {
+      const target = connectedUsers.get(to?.toString());
+      if (!target) return;
+      io.to(target.socketId).emit("call-accepted", signal);
+    });
+
+    socket.on("ice-candidate", ({ to, candidate }) => {
+      const target = connectedUsers.get(to?.toString());
+      if (!target) return;
+      io.to(target.socketId).emit("ice-candidate", candidate);
+    });
+
+    socket.on("reject-call", ({ to }) => {
+      const target = connectedUsers.get(to?.toString());
+      if (!target) return;
+      io.to(target.socketId).emit("call-rejected");
+    });
+
+    socket.on("end-call", ({ to }) => {
+      const target = connectedUsers.get(to?.toString());
+      if (target) io.to(target.socketId).emit("call-ended");
     });
 
     // Handle disconnection

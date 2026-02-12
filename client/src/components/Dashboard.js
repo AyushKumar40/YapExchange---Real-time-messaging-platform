@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import ChatRoom from './chat/ChatRoom';
-import DirectMessages from './chat/DirectMessages';
-import RoomList from './rooms/RoomList';
-import CreateRoom from './rooms/CreateRoom';
-import UserProfile from './profile/UserProfile';
-import LoadingScreen from './common/LoadingScreen';
-import useAuthStore from '../store/authStore';
-import useChatStore from '../store/chatStore';
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import ChatRoom from "./chat/ChatRoom";
+import DirectMessages from "./chat/DirectMessages";
+import RoomList from "./rooms/RoomList";
+import CreateRoom from "./rooms/CreateRoom";
+import UserProfile from "./profile/UserProfile";
+import LoadingScreen from "./common/LoadingScreen";
+import CallComponent from "./call/CallComponent";
+import useAuthStore from "../store/authStore";
+import useChatStore from "../store/chatStore";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
   const { fetchRooms, fetchUsers } = useChatStore();
-  const [activeTab, setActiveTab] = useState('rooms');
+  const [activeTab, setActiveTab] = useState("rooms");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -28,12 +29,12 @@ const Dashboard = () => {
             setIsInitializing(false);
           }, 1500);
         } catch (error) {
-          console.error('Error initializing dashboard:', error);
+          console.error("Error initializing dashboard:", error);
           setIsInitializing(false);
         }
       } else if (!isAuthenticated || !user) {
         // Redirect to login if not authenticated or no user
-        navigate('/login');
+        navigate("/login");
       }
     };
 
@@ -51,12 +52,12 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       {/* Mobile hamburger menu button */}
-      <button 
+      <button
         className="mobile-menu-btn"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label="Toggle menu"
       >
-        <span className={`hamburger ${sidebarOpen ? 'open' : ''}`}>
+        <span className={`hamburger ${sidebarOpen ? "open" : ""}`}>
           <span></span>
           <span></span>
           <span></span>
@@ -65,21 +66,18 @@ const Dashboard = () => {
 
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div 
-          className="mobile-overlay"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="mobile-overlay" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <Sidebar 
-        user={user} 
-        activeTab={activeTab} 
+      <Sidebar
+        user={user}
+        activeTab={activeTab}
         setActiveTab={setActiveTab}
         onLogout={handleLogout}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      
+
       <div className="main-content">
         <Routes>
           <Route path="/" element={<RoomList />} />
@@ -89,6 +87,9 @@ const Dashboard = () => {
           <Route path="/profile" element={<UserProfile />} />
         </Routes>
       </div>
+
+      {/* Global call UI: outgoing (from store) and incoming (from socket) */}
+      <CallComponent />
     </div>
   );
 };
