@@ -19,10 +19,7 @@ const io = socketIo(server, {
   cors: {
     origin:
       process.env.NODE_ENV === "production"
-        ? [
-            "https://your-netlify-app.netlify.app",
-            "https://your-custom-domain.com",
-          ]
+        ? ["https://yapexchange.netlify.app", "https://your-custom-domain.com"]
         : [
             "http://localhost:3000",
             "http://localhost:3006",
@@ -40,17 +37,14 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? [
-            "https://your-netlify-app.netlify.app",
-            "https://your-custom-domain.com",
-          ]
+        ? ["https://yapexchange.netlify.app", "https://your-custom-domain.com"]
         : [
             "http://localhost:3000",
             "http://localhost:3006",
             "http://localhost:3008",
           ],
     credentials: true,
-  })
+  }),
 );
 
 const limiter = rateLimit({
