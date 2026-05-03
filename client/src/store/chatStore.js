@@ -34,6 +34,22 @@ const useChatStore = create((set, get) => ({
       },
     });
 
+    socket.on("incoming-call", (data) => {
+      set({
+        outgoingCallTarget: {
+          receiverId: data.from,
+          receiverName: data.fromUsername,
+          isVideoCall: data.isVideoCall,
+          incoming: true,
+          signal: data.signal,
+        },
+      });
+    });
+
+    socket.on("call-ended", () => {
+      set({ outgoingCallTarget: null });
+    });
+
     socket.on("connect", () => {
       console.log("Connected to server");
       set({ socket, isConnected: true });
@@ -58,7 +74,7 @@ const useChatStore = create((set, get) => ({
           // Check if message mentions current user
           const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
           const isMention = message.mentions?.some(
-            (mention) => mention._id === currentUser._id,
+            (mention) => mention._id === currentUser._id
           );
 
           if (isMention) {
@@ -102,7 +118,7 @@ const useChatStore = create((set, get) => ({
       const { messageId, reactions } = data;
       const { messages, currentRoom } = get();
       const updatedMessages = messages.map((msg) =>
-        msg._id === messageId ? { ...msg, reactions } : msg,
+        msg._id === messageId ? { ...msg, reactions } : msg
       );
       set({ messages: updatedMessages });
 
@@ -117,7 +133,7 @@ const useChatStore = create((set, get) => ({
         notificationService.showReactionNotification(
           message,
           latestReaction,
-          roomName,
+          roomName
         );
         notificationService.playNotificationSound();
       }
@@ -324,7 +340,7 @@ const useChatStore = create((set, get) => ({
 
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/api/messages/room/${roomId}?page=${page}`,
+        `${API_BASE_URL}/api/messages/room/${roomId}?page=${page}`
       );
       set({ messages: response.data.messages || [] });
     } catch (error) {
@@ -347,7 +363,7 @@ const useChatStore = create((set, get) => ({
       const response = await axios.put(
         `${API_BASE_URL}/api/messages/${messageId}`,
         { content: content.trim() },
-        { headers: { Authorization: `Bearer ${token}` } },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const updated = response.data?.message;
@@ -355,7 +371,7 @@ const useChatStore = create((set, get) => ({
         const { messages } = get();
         set({
           messages: (messages || []).map((m) =>
-            m._id === updated._id ? updated : m,
+            m._id === updated._id ? updated : m
           ),
         });
       }
@@ -408,7 +424,7 @@ const useChatStore = create((set, get) => ({
       }
 
       const response = await axios.get(
-        `${API_BASE_URL}/api/messages/search?${params}`,
+        `${API_BASE_URL}/api/messages/search?${params}`
       );
       return {
         success: true,
@@ -428,7 +444,7 @@ const useChatStore = create((set, get) => ({
     roomId,
     messageType = "text",
     attachment = null,
-    replyTo = null,
+    replyTo = null
   ) => {
     const { socket, currentRoom } = get();
     if (!socket) return { success: false, error: "Socket not connected" };
@@ -542,7 +558,7 @@ const useChatStore = create((set, get) => ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const { socket } = get();

@@ -73,7 +73,7 @@ const setupSocketHandlers = (io) => {
 
         // Check if user is a member
         const isMember = room.members.some(
-          (member) => member.user.toString() === socket.user._id.toString(),
+          (member) => member.user.toString() === socket.user._id.toString()
         );
 
         if (room.isPrivate && !isMember) {
@@ -139,7 +139,7 @@ const setupSocketHandlers = (io) => {
         }
 
         const isMember = room.members.some(
-          (member) => member.user.toString() === socket.user._id.toString(),
+          (member) => member.user.toString() === socket.user._id.toString()
         );
 
         if (room.isPrivate && !isMember) {
@@ -217,7 +217,7 @@ const setupSocketHandlers = (io) => {
         const existingReaction = message.reactions.find(
           (reaction) =>
             reaction.user.toString() === socket.user._id.toString() &&
-            reaction.emoji === emoji,
+            reaction.emoji === emoji
         );
 
         if (existingReaction) {
@@ -227,7 +227,7 @@ const setupSocketHandlers = (io) => {
               !(
                 reaction.user.toString() === socket.user._id.toString() &&
                 reaction.emoji === emoji
-              ),
+              )
           );
         } else {
           // Add reaction
@@ -332,112 +332,62 @@ const setupSocketHandlers = (io) => {
       }
     });
 
-    // Handle message reactions
-    socket.on("add_reaction", async (data) => {
-      try {
-        const { messageId, emoji } = data;
-
-        const message = await Message.findById(messageId);
-        if (!message) {
-          socket.emit("error", { message: "Message not found" });
-          return;
-        }
-
-        // Check if user already reacted
-        const existingReaction = message.reactions.find(
-          (reaction) =>
-            reaction.user.toString() === socket.user._id.toString() &&
-            reaction.emoji === emoji,
-        );
-
-        if (existingReaction) {
-          // Remove reaction
-          message.reactions = message.reactions.filter(
-            (reaction) =>
-              !(
-                reaction.user.toString() === socket.user._id.toString() &&
-                reaction.emoji === emoji
-              ),
-          );
-        } else {
-          // Add reaction
-          message.reactions.push({
-            user: socket.user._id,
-            emoji,
-          });
-        }
-
-        await message.save();
-        await message.populate("reactions.user", "username avatar");
-
-        // Emit to room
-        io.to(message.room.toString()).emit("message_reaction_updated", {
-          message,
-        });
-      } catch (error) {
-        console.error("Add reaction error:", error);
-        socket.emit("error", { message: "Server error" });
-      }
-    });
-
     // WebRTC call signaling (use userId; server resolves to socketId via connectedUsers)
     socket.on("call-user", ({ userToCall, signalData, from, isVideoCall }) => {
       const target = connectedUsers.get(userToCall?.toString());
+
       if (!target) {
         socket.emit("call-failed", {
-          message: "User is offline or unavailable",
+          message: "User is offline",
         });
         return;
       }
+
+      console.log("CALL INIT:", from, "→", userToCall);
+
       io.to(target.socketId).emit("incoming-call", {
-        signal: signalData,
-        from: socket.user._id,
+        from,
         fromUsername: socket.user.username,
-        isVideoCall: !!isVideoCall,
+        signal: {
+          type: signalData.type,
+          sdp: signalData.sdp,
+        },
+        isVideoCall,
       });
     });
 
     socket.on("answer-call", ({ to, signal }) => {
       const target = connectedUsers.get(to?.toString());
       if (!target) return;
+
       io.to(target.socketId).emit("call-accepted", signal);
     });
 
     socket.on("ice-candidate", ({ to, candidate }) => {
       const target = connectedUsers.get(to?.toString());
       if (!target) return;
+
       io.to(target.socketId).emit("ice-candidate", candidate);
     });
 
     socket.on("reject-call", ({ to }) => {
       const target = connectedUsers.get(to?.toString());
       if (!target) return;
+
       io.to(target.socketId).emit("call-rejected");
     });
 
     socket.on("end-call", ({ to }) => {
       const target = connectedUsers.get(to?.toString());
-      if (target) io.to(target.socketId).emit("call-ended");
+      if (!target) return;
+
+      io.to(target.socketId).emit("call-ended");
     });
 
-    // Handle disconnection
-    socket.on("disconnect", async () => {
-      console.log(`User disconnected: ${socket.user.username}`);
-
-      // Remove from connected users
+    // Handle disconnect
+    socket.on("disconnect", () => {
       connectedUsers.delete(socket.user._id.toString());
-
-      // Update user offline status
-      await User.findByIdAndUpdate(socket.user._id, {
-        isOnline: false,
-        lastSeen: new Date(),
-      });
-
-      // Notify others that user is offline
-      socket.broadcast.emit("user_offline", {
-        userId: socket.user._id,
-        username: socket.user.username,
-      });
+      console.log("Disconnected:", socket.user.username);
     });
   });
 

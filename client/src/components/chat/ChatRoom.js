@@ -18,10 +18,12 @@ import MemberList from "./MemberList";
 import SearchMessages from "./SearchMessages";
 import LoadingScreen from "../common/LoadingScreen";
 import "./ChatRoom.css";
+import CallComponent from "../call/CallComponent";
 
 const ChatRoom = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const {
     currentRoom,
     messages,
@@ -32,8 +34,9 @@ const ChatRoom = () => {
     typingUsers,
     joinRoomSocket,
     leaveRoom,
+    outgoingCallTarget,
+    setOutgoingCallTarget,
   } = useChatStore();
-  const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [selectedBackground, setSelectedBackground] = useState(() => {
     return localStorage.getItem("chatBackground") || "default";
@@ -46,7 +49,6 @@ const ChatRoom = () => {
   const [showCallMemberPicker, setShowCallMemberPicker] = useState(false);
   const [callPickerType, setCallPickerType] = useState("video");
   const messagesEndRef = useRef(null);
-  const setOutgoingCallTarget = useChatStore((s) => s.setOutgoingCallTarget);
 
   const backgroundOptions = [
     {
@@ -316,7 +318,6 @@ const ChatRoom = () => {
           </button>
         </div>
       </div>
-
       {/* Background Selector */}
       {showBackgroundSelector && (
         <div className="background-selector">
@@ -339,7 +340,6 @@ const ChatRoom = () => {
           </div>
         </div>
       )}
-
       <div className={`chat-messages bg-${selectedBackground}`}>
         <MessageList messages={messages} onReply={handleReply} />
 
@@ -357,13 +357,11 @@ const ChatRoom = () => {
 
         <div ref={messagesEndRef} />
       </div>
-
       <MessageInput
         roomId={roomId}
         replyingTo={replyingTo}
         onCancelReply={handleCancelReply}
       />
-
       {/* Room Settings Modal */}
       {showRoomSettings && (
         <RoomSettings
@@ -376,7 +374,6 @@ const ChatRoom = () => {
           }}
         />
       )}
-
       {/* Member List Modal */}
       {showMemberList && (
         <MemberList
@@ -384,7 +381,6 @@ const ChatRoom = () => {
           onClose={() => setShowMemberList(false)}
         />
       )}
-
       {/* Search Messages Modal */}
       {showSearch && (
         <SearchMessages
@@ -395,7 +391,6 @@ const ChatRoom = () => {
           currentRoomName={currentRoom?.name}
         />
       )}
-
       {/* Call member picker (group rooms) */}
       {showCallMemberPicker && currentRoom?.members?.length > 0 && (
         <div
@@ -416,7 +411,7 @@ const ChatRoom = () => {
                 .filter(
                   (m) =>
                     (m?.user?._id || m?._id)?.toString() !==
-                    user?._id?.toString(),
+                    user?._id?.toString()
                 )
                 .map((member) => {
                   const u = member.user || member;
@@ -455,6 +450,8 @@ const ChatRoom = () => {
           </div>
         </div>
       )}
+      {/* CALL COMPONENT */}
+      {outgoingCallTarget ? <CallComponent key="call" /> : null}{" "}
     </div>
   );
 };
