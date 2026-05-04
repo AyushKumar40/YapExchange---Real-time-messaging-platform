@@ -6,7 +6,6 @@ import {
   FiUsers,
   FiSettings,
   FiSearch,
-  FiPhone,
   FiVideo,
 } from "react-icons/fi";
 import useChatStore from "../../store/chatStore";
