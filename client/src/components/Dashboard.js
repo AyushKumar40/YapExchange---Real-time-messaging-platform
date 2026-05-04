@@ -88,7 +88,6 @@ const Dashboard = () => {
         </Routes>
       </div>
 
-      {/* Global call UI: outgoing (from store) and incoming (from socket) */}
       <CallComponent />
     </div>
   );

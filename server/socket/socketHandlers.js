@@ -73,7 +73,7 @@ const setupSocketHandlers = (io) => {
 
         // Check if user is a member
         const isMember = room.members.some(
-          (member) => member.user.toString() === socket.user._id.toString()
+          (member) => member.user.toString() === socket.user._id.toString(),
         );
 
         if (room.isPrivate && !isMember) {
@@ -139,7 +139,7 @@ const setupSocketHandlers = (io) => {
         }
 
         const isMember = room.members.some(
-          (member) => member.user.toString() === socket.user._id.toString()
+          (member) => member.user.toString() === socket.user._id.toString(),
         );
 
         if (room.isPrivate && !isMember) {
@@ -217,7 +217,7 @@ const setupSocketHandlers = (io) => {
         const existingReaction = message.reactions.find(
           (reaction) =>
             reaction.user.toString() === socket.user._id.toString() &&
-            reaction.emoji === emoji
+            reaction.emoji === emoji,
         );
 
         if (existingReaction) {
@@ -227,7 +227,7 @@ const setupSocketHandlers = (io) => {
               !(
                 reaction.user.toString() === socket.user._id.toString() &&
                 reaction.emoji === emoji
-              )
+              ),
           );
         } else {
           // Add reaction
@@ -375,6 +375,16 @@ const setupSocketHandlers = (io) => {
       if (!target) return;
 
       io.to(target.socketId).emit("call-rejected");
+    });
+
+    socket.on("camera-toggle", ({ to, isVideoOff }) => {
+      const target = connectedUsers.get(to?.toString());
+      if (!target) return;
+
+      io.to(target.socketId).emit("camera-toggle", {
+        from: socket.user._id,
+        isVideoOff: !!isVideoOff,
+      });
     });
 
     socket.on("end-call", ({ to }) => {

@@ -18,12 +18,10 @@ import MemberList from "./MemberList";
 import SearchMessages from "./SearchMessages";
 import LoadingScreen from "../common/LoadingScreen";
 import "./ChatRoom.css";
-import CallComponent from "../call/CallComponent";
 
 const ChatRoom = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
   const {
     currentRoom,
     messages,
@@ -34,9 +32,9 @@ const ChatRoom = () => {
     typingUsers,
     joinRoomSocket,
     leaveRoom,
-    outgoingCallTarget,
     setOutgoingCallTarget,
   } = useChatStore();
+  const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [selectedBackground, setSelectedBackground] = useState(() => {
     return localStorage.getItem("chatBackground") || "default";
@@ -303,21 +301,24 @@ const ChatRoom = () => {
             <FiUsers />
           </button>
           <button
+            type="button"
             className="header-action-btn"
             onClick={() => handleStartCall(true)}
             title="Video call"
           >
             <FiVideo />
           </button>
-          <button
+          {/* <button
+            type="button"
             className="header-action-btn"
             onClick={() => handleStartCall(false)}
             title="Voice call"
           >
             <FiPhone />
-          </button>
+          </button> */}
         </div>
       </div>
+
       {/* Background Selector */}
       {showBackgroundSelector && (
         <div className="background-selector">
@@ -340,6 +341,7 @@ const ChatRoom = () => {
           </div>
         </div>
       )}
+
       <div className={`chat-messages bg-${selectedBackground}`}>
         <MessageList messages={messages} onReply={handleReply} />
 
@@ -357,11 +359,13 @@ const ChatRoom = () => {
 
         <div ref={messagesEndRef} />
       </div>
+
       <MessageInput
         roomId={roomId}
         replyingTo={replyingTo}
         onCancelReply={handleCancelReply}
       />
+
       {/* Room Settings Modal */}
       {showRoomSettings && (
         <RoomSettings
@@ -374,6 +378,7 @@ const ChatRoom = () => {
           }}
         />
       )}
+
       {/* Member List Modal */}
       {showMemberList && (
         <MemberList
@@ -381,6 +386,7 @@ const ChatRoom = () => {
           onClose={() => setShowMemberList(false)}
         />
       )}
+
       {/* Search Messages Modal */}
       {showSearch && (
         <SearchMessages
@@ -391,7 +397,7 @@ const ChatRoom = () => {
           currentRoomName={currentRoom?.name}
         />
       )}
-      {/* Call member picker (group rooms) */}
+
       {showCallMemberPicker && currentRoom?.members?.length > 0 && (
         <div
           className="call-member-picker-overlay"
@@ -403,15 +409,15 @@ const ChatRoom = () => {
           >
             <h3>
               {callPickerType === "video"
-                ? "Select member for video call"
-                : "Select member for voice call"}
+                ? "Choose who to video call"
+                : "Choose who to voice call"}
             </h3>
             <ul className="call-member-list">
               {currentRoom.members
                 .filter(
                   (m) =>
                     (m?.user?._id || m?._id)?.toString() !==
-                    user?._id?.toString()
+                    user?._id?.toString(),
                 )
                 .map((member) => {
                   const u = member.user || member;
@@ -428,14 +434,14 @@ const ChatRoom = () => {
                       >
                         <FiVideo />
                       </button>
-                      <button
+                      {/* <button
                         type="button"
                         className="call-picker-btn voice"
                         onClick={() => handleSelectMemberForCall(member, false)}
                         title="Voice call"
                       >
                         <FiPhone />
-                      </button>
+                      </button> */}
                     </li>
                   );
                 })}
@@ -450,8 +456,6 @@ const ChatRoom = () => {
           </div>
         </div>
       )}
-      {/* CALL COMPONENT */}
-      {outgoingCallTarget ? <CallComponent key="call" /> : null}{" "}
     </div>
   );
 };
