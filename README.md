@@ -393,10 +393,12 @@ This chat application is feature-complete and production-ready! Some potential f
 
 ⭐ **Star this repository if you found it helpful!**
 
-🔗 **Live Demo**: [Your deployed URL here]
+🔗 **Live Demo**: https://yapexchange.netlify.app/
 
-📧 **Contact**: [Your email here]
+📧 Email: ayukumar456@gmail.com
 
-🐦 **Follow**: [Your social media here]
+🔗 GitHub: AyushKumar40 GitHub Profile
+
+🔗 LinkedIn: Ayush Kumar LinkedIn
 
 # YapExchange---Real-time-messaging-platform
